@@ -1,0 +1,142 @@
+.modalView {
+    padding: 40px;
+    background-color: #fff;
+}
+
+.header {
+    display: flex;
+    gap: 30px;
+
+    margin-bottom: 40px;
+}
+
+.header .h2 {
+    margin-bottom: 5px;
+}
+
+.header .p {
+    font-weight: 300;
+    width: 60%;
+}
+
+.header .button {
+    border: none;
+    background: transparent;
+    font-size: 35px;
+    color: #0e994d;
+    background-color: #f6f6f6;
+    aspect-ratio: 1/1;
+    width: 50px;
+    height: 50px;
+    line-height: 0;
+    border-radius: 50%;
+
+    transition: all 200ms ease-in-out;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header .button:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.buttonAdicionar {
+    background: transparent;
+    color: #fff;
+    border-radius: 1px;
+    padding: 10px 20px;
+    border: none;
+  
+    transition: all 200ms ease-in-out;
+
+    position: absolute;
+    bottom: 15px;
+    right: 10px;
+}
+
+.buttonAdicionar .icon {
+    width: 60px;
+    height: 60px;
+}
+  
+.buttonAdicionar:hover {
+    filter: brightness(1.1);
+    cursor: pointer;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputLabel {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.inputLabel::before {
+    content: '';
+    position: absolute;
+    background: #0e994d;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    left: -10px;
+    top: 7px;
+}
+
+.inputText {
+    border: none;
+    outline: none;
+    width: 100%;
+
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.fileInput {
+    display: none;
+}
+
+.fileLabel {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.inputPlaceHolder {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #6f6f6f;
+    width: 100%;
+}
+
+.form .button {
+    margin-top: 10px;
+    background: linear-gradient(to right, #2AAF65, #0e994d);
+    color: #fff;
+    border-radius: 1px;
+    padding: 10px 20px;
+    border: none;
+    font-size: 18px;
+  
+    transition: all 200ms ease-in-out;
+}
+
+.form .button:hover {
+    filter: brightness(1.1);
+    cursor: pointer;
+}

@@ -1,0 +1,152 @@
+
+.container {
+    background: #000000;
+    height: 100vh;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    width: 15%;
+    top: 5%;
+    z-index: 2;
+}
+
+.bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(.5) blur(2px);
+}
+
+.logoSmall {
+    position: absolute;
+    width: 30%;
+    z-index: 1;
+    bottom: -10%;
+    left: -10%;
+    transform: rotate(25deg);
+    opacity: .2;
+
+    animation: moveLogo 10s ease-in-out infinite;
+}
+
+@keyframes moveLogo {
+    50% {
+        transform: rotate(30deg);
+    }
+}
+
+.box {
+    position: relative;
+    z-index: 2;
+
+    background: #fff;
+    padding: 4rem;
+    border-radius: .5rem;
+
+    box-shadow:  20px 20px 60px #0000006f,
+             -20px -20px 60px #34343456;
+}
+
+.title {
+    color: #039752;
+    font-weight: 400;
+}
+
+.subtitle {
+    color: #454545;
+    font-weight: 400;
+}
+
+.span {
+    color: #3f3f3f;
+    font-weight: 600;
+}
+
+.spanH1 {
+    color: #039752;
+    font-weight: 600;
+}
+
+.form {
+    margin-top: 3rem;
+}
+
+.inputbox {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.label {
+    font-weight: 500;
+    color: #000000;
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: #fff;
+    padding-inline: 5px;
+}
+
+.input {
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px;
+    border: 2px solid #222222;
+    font-size: 18px;
+}
+
+.input:focus {
+    border: 2px solid #039752;
+    outline: none;
+}
+
+.button {
+    font-size: 18px;
+    color: #fff;
+    background: #039752;
+    padding: 1rem;
+    font-weight: 600;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 12px;
+
+    transition: all 200ms ease-in-out;
+}
+
+.button:hover {
+    cursor: pointer;
+    box-shadow:  10px 10px 30px #d9d9d9,
+             -10px -10px 30px #ffffff;
+    background: #018547;
+}
+
+.a {
+    font-weight: 400;
+    color: #039752;
+    text-decoration: none;
+
+    transition: all 200ms ease-in-out;
+}
+
+.aSpan {
+    font-weight: 600;
+    color: #039752;
+
+    transition: all 200ms ease-in-out;
+}
+
+.a:hover .aSpan {
+    color: #027740;
+    cursor: pointer;
+}

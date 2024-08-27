@@ -1,0 +1,93 @@
+.button {
+    border: none;
+    background-color: #f2f2f2;
+    color: #000000;
+    font-size: 22px;
+    font-weight: 500;
+
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+
+    transition: all 200ms ease-in-out;
+}
+
+.icon {
+    width: 20px;
+}
+
+.text {
+    text-align: left;
+}
+
+.h2 {
+    font-size: 18px;
+}
+
+.p {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.button:hover {
+    background-color: #e5e5e5;
+    cursor: pointer;
+}
+
+.modalView {
+    padding: 40px;
+    background-color: #fff;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+
+    margin-bottom: 40px;
+}
+
+.header .h2 {
+    margin-bottom: 5px;
+}
+
+.header .p {
+    font-weight: 300;
+    width: 90%;
+}
+
+.header .button {
+    border: none;
+    background: transparent;
+    font-size: 35px;
+    color: #0e994d;
+    background-color: #f6f6f6;
+    aspect-ratio: 1/1;
+    width: 50px;
+    height: 50px;
+    line-height: 0;
+    border-radius: 50%;
+
+    transition: all 200ms ease-in-out;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header .button:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.content {
+    background-color: #f0f0f0;
+    padding: 60px;
+}
+
+.content h3 {
+    font-size: 14px;
+    font-weight: 300;
+}

@@ -1,0 +1,219 @@
+.container {
+    background: #fff;
+    min-height: 100vh;
+    min-width: 100vw;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .wrapper {
+    height: 100vh;
+    width: 100vw;
+    padding-inline: 3rem;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .header {
+    padding-block: 2rem;
+    border-bottom: 2px solid #0b0b0b40;
+    width: 100%;
+  
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    margin-bottom: 15px;
+  }
+  
+  .headText {
+    color: #039752;
+  }
+
+  .header .a {
+    color: #039752;
+    text-decoration: none;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-bottom: 10px;
+}
+  
+  .h2 {
+    font-weight: 500;
+    margin-bottom: 4px;
+    font-size: 30px;
+  }
+  
+  .h2Span {
+    font-weight: 700;
+  }
+  
+  .p {
+    font-size: 20px;
+    font-weight: 400;
+  }
+  
+  .botaoAdicionar {
+    transition: all 200ms ease-in-out;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .botaoAdicionar:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+  }
+
+.imagemFazenda {
+    position: fixed;
+    top: 0;
+    left: 0;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    z-index: 0;
+    filter: brightness(.3);
+
+    display: none;
+}
+
+.head {
+    margin-bottom: 20px;
+}
+
+.head .h2 {
+    color: #000;
+    font-size: 26px;
+    font-weight: 700;
+    max-width: 90%;
+}
+
+.head .p {
+    color: #000;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: -3px;
+}
+
+.licencas .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.diversos .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.card {
+  background: linear-gradient(to right, #0b733a, #078440);
+  padding: 25px;
+  border-radius: 10px;
+
+  transition: all 200ms ease-in-out;
+}
+
+.card:hover {
+  cursor: pointer;
+  filter: brightness(1.2);
+}
+
+.card .icon {
+    width: 45px;
+}
+
+.card .h3 {
+    font-weight: 600;
+    color: #fff;
+    margin-top: 15px;
+}
+
+.diversos {
+    margin-top: 40px;
+}
+
+.cardsModal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.cardsModal .card {
+  padding: 20px;
+}
+
+.cardsModal .card .icon {
+  width: 35px;
+}
+
+.cardsModal .card .h3 {
+  font-size: 16px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  border: none;
+  outline: none;
+  width: 100%;
+
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadButton {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: linear-gradient(to right, #2AAF65, #0e994d);
+  color: #fff;
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+
+  transition: all 200ms ease-in-out;
+  width: 100%;
+}
+
+.uploadButton:hover {
+  filter: brightness(1.1);
+  cursor: pointer;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle {
+  width: 20px;
+  height: 20px;
+}
