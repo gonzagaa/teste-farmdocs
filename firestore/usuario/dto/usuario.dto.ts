@@ -15,10 +15,10 @@ class UserDTO {
 const userSchema = yup.object().shape({
   id: yup.string(),
   name: yup.string().required(),
-  registryCode: yup.string().required(),
-  birthdate: yup.string().required(),
+  registryCode: yup.string(),
+  birthdate: yup.string(),
   email: yup.string().required(),
-  phone: yup.string().required(),
+  phone: yup.string(),
   thumbnail: yup.string(),
 });
 

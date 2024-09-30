@@ -1,11 +1,45 @@
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
 import ModalComponent from "../components/ModalComponent";
 import ModalAdicionarFazenda from "../components/ModalAdicionarFazenda";
-import "swiper/swiper-bundle.css"; // Importando o CSS do Swiper
+import { getAuth } from "firebase/auth";
+import { useRouter } from "next/router";
+import { getFazendaByUserId } from "../firestore/fazendas/controller/fazenda.controller";
+import { FazendaDTO } from "../firestore/fazendas/dto/fazendas.dto";
 
 const Home = () => {
+  const [user, setUser] = useState(null);
+  const [fazendas, setFazendas] = useState<FazendaDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setUser(user);
+        const fetchedFazendas = await getFazendaByUserId(user.uid);
+        setFazendas(fetchedFazendas);
+      } else {
+        setUser(null);
+        setFazendas([]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleFazendaClick = (id: string) => {
+    // Redireciona para a página da fazenda
+    router.push(`/${id}`);
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -19,63 +53,53 @@ const Home = () => {
       </Head>
 
       <main className={styles.wrapper}>
-        <ModalAdicionarFazenda/>
+        <ModalAdicionarFazenda />
         <div className={styles.content}>
           <div className={styles.header}>
             <div className={styles.headText}>
               <h2 className={styles.h2}>
-                <span className={styles.h2Span}>Olá, </span>Nome!
+                <span className={styles.h2Span}>Olá, </span>
+                {user?.displayName || "Usuário"}!
               </h2>
               <p className={styles.p}>Aqui estão suas fazendas:</p>
             </div>
 
             <div className={styles.boxCarinha}>
               <a>
-                <ModalComponent/>
+                <ModalComponent />
               </a>
             </div>
           </div>
 
           <div className={styles.fazendas}>
             <div className={styles.cards}>
-              <a href="http://localhost:3000/Fazenda" className={styles.card}>
-                <img className={styles.imagemFazenda} src="./images/fazenda1.png" />
-
-                <div className={styles.text}>
-                  <h2 className={styles.h2}>Fazenda Barra Grande</h2>
-                  <p className={styles.p}>Clique para acessar os documentos dessa fazenda</p>
-                </div>
-              </a>
-
-              <a className={styles.card}>
-                <img className={styles.imagemFazenda} src="./images/fazenda2.png" />
-
-                <div className={styles.text}>
-                  <h2 className={styles.h2}>Fazenda Ana Cecilia</h2>
-                  <p className={styles.p}>Clique para acessar os documentos dessa fazenda</p>
-                </div>
-              </a>
-
-              <a className={styles.card}>
-                <img className={styles.imagemFazenda} src="./images/fazenda3.png" />
-
-                <div className={styles.text}>
-                  <h2 className={styles.h2}>Fazenda Itamara</h2>
-                  <p className={styles.p}>Clique para acessar os documentos dessa fazenda</p>
-                </div>
-              </a>
-
-              <a className={styles.card}>
-                <img className={styles.imagemFazenda} src="./images/fazenda1.png" />
-
-                <div className={styles.text}>
-                  <h2 className={styles.h2}>Fazenda Barra Grande</h2>
-                  <p className={styles.p}>Clique para acessar os documentos dessa fazenda</p>
-                </div>
-              </a>
+              {fazendas.length > 0 ? (
+                fazendas.map((fazenda) => (
+                  <a
+                    key={fazenda.id}
+                    onClick={() => handleFazendaClick(fazenda.id)} // Redireciona ao clicar
+                    className={styles.card}
+                  >
+                    <img
+                      className={styles.imagemFazenda}
+                      src={fazenda.thumbnail}
+                      alt={`Imagem da ${fazenda.name}`}
+                    />
+                    <div className={styles.text}>
+                      <h2 className={styles.h2}>{fazenda.name}</h2>
+                      <p className={styles.p}>
+                        Clique para acessar os documentos dessa fazenda
+                      </p>
+                    </div>
+                  </a>
+                ))
+              ) : (
+                <p className={styles.noFazendas}>
+                  Você ainda não adicionou nenhuma fazenda.
+                </p>
+              )}
             </div>
           </div>
-
         </div>
       </main>
 

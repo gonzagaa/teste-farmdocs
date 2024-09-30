@@ -91,3 +91,28 @@
     font-size: 14px;
     font-weight: 300;
 }
+
+.notificationItem {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .vencimentoWarning {
+    color: orange;
+    font-weight: bold;
+  }
+  
+  .vencimentoOverdue {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .scrollContainer {
+    max-height: 400px; /* Defina a altura máxima do contêiner */
+    overflow-y: auto; /* Habilita a rolagem vertical se o conteúdo exceder a altura máxima */
+    padding-right: 10px; /* Ajuste para evitar sobreposição de conteúdo com a barra de rolagem */
+  }
+  
+  

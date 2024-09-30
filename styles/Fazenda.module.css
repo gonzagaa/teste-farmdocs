@@ -58,6 +58,11 @@
   .h2Span {
     font-weight: 700;
   }
+
+  .h3Span {
+    font-weight: 600;
+    color: #000;
+  }
   
   .p {
     font-size: 20px;
@@ -217,3 +222,25 @@
   width: 20px;
   height: 20px;
 }
+
+.documentList {
+  list-style: none;
+  padding: 0;
+}
+
+.documentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #000;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.deleteIcon {
+  cursor: pointer;
+  color: #ff0000;
+}
+

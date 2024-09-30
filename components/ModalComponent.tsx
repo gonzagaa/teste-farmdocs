@@ -1,20 +1,18 @@
-// geral
 import React, { useState } from "react";
 import Modal from "react-modal";
 import ModalNotificacoes from "../components/ModalNotificacoes";
+import { signOut } from "firebase/auth";
+import { auth } from "../services/firebase";
+import { useRouter } from "next/router"; // Importando useRouter do Next.js
 
-//icons react
 import { SlArrowLeft } from "react-icons/sl";
-import { FaRegUser, FaCheck } from "react-icons/fa6";
-
-//css
 import styles from "../styles/ModalPerfil.module.css";
-import zIndex from "@mui/material/styles/zIndex";
 
 Modal.setAppElement("#__next");
 
 const ModalComponent = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
+  const router = useRouter(); // Instanciando o router
 
   const openModal = () => {
     setIsOpen(true);
@@ -22,6 +20,17 @@ const ModalComponent = () => {
 
   const closeModal = () => {
     setIsOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      closeModal();
+      router.push("/"); // Usando router.push para redirecionar para a página de login
+    } catch (error) {
+      console.error("Erro ao sair da conta:", error);
+      alert("Erro ao sair da conta. Tente novamente.");
+    }
   };
 
   return (
@@ -43,18 +52,10 @@ const ModalComponent = () => {
 
           <div className={styles.buttons}>
             <button className={styles.button}>
-              <img className={styles.icon} src="./images/perfil.png" />
-              <div className={styles.text}>
-                <h2 className={styles.h2}>Editar perfil</h2>
-                <p className={styles.p}>Vizualize e edite suas informações pessoais.</p>
-              </div>
-            </button>
-            
-            <button className={styles.button}>
-                <ModalNotificacoes/>
+              <ModalNotificacoes />
             </button>
 
-            <button className={styles.button}>
+            <button className={styles.button} onClick={closeModal}>
               <img className={styles.icon} src="./images/folha.png" />
               <div className={styles.text}>
                 <h2 className={styles.h2}>Minhas Propriedades</h2>
@@ -62,7 +63,13 @@ const ModalComponent = () => {
               </div>
             </button>
 
-            <button className={styles.button}>
+            <button
+              className={styles.button}
+              onClick={() =>
+                window.location.href =
+                  "https://wa.me/5511915799139?text=Ol%C3%A1,%20preciso%20de%20ajuda%20com%20o%20Farm%20Docs%20%F0%9F%8C%BE"
+              }
+            >
               <img className={styles.icon} src="./images/chat.png" />
               <div className={styles.text}>
                 <h2 className={styles.h2}>Fale Conosco</h2>
@@ -70,24 +77,21 @@ const ModalComponent = () => {
               </div>
             </button>
 
-            <button className={styles.button}>
+            <button
+              className={styles.button}
+              onClick={() =>
+                window.location.href = "https://www.forfarmdocs.com/#faq"
+              }
+            >
               <img className={styles.icon} src="./images/duvida.png" />
               <div className={styles.text}>
                 <h2 className={styles.h2}>Perguntas Frequentes</h2>
                 <p className={styles.p}>Acesse nossa central de ajuda.</p>
               </div>
             </button>
-
-            <button className={styles.button}>
-              <img className={styles.icon} src="./images/lixeira.png" />
-              <div className={styles.text}>
-                <h2 className={styles.h2}>Excluir conta</h2>
-                <p className={styles.p}>Clique aqui para excluir sua conta.</p>
-              </div>
-            </button>
           </div>
 
-          <button className={styles.buttonSair} onClick={closeModal}>
+          <button className={styles.buttonSair} onClick={handleSignOut}>
             Sair da conta
           </button>
         </div>

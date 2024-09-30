@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB29Vr_Gr5WOlrT2xePFjaAYhSDIHSzfZs",
-  authDomain: "medconsulta-2b6df.firebaseapp.com",
-  projectId: "medconsulta-2b6df",
-  storageBucket: "medconsulta-2b6df.appspot.com",
-  messagingSenderId: "394701899441",
-  appId: "1:394701899441:web:23928a6e6f7885f7688490",
+  apiKey: "AIzaSyAXiJ_Z1DFKSIwv1fZny9Ik5TRDM9H66eQ",
+  authDomain: "forfarmdocs.firebaseapp.com",
+  projectId: "forfarmdocs",
+  storageBucket: "forfarmdocs.appspot.com",
+  messagingSenderId: "257447594518",
+  appId: "1:257447594518:web:39d135a250817e1e944337"
 };
 
 let app;

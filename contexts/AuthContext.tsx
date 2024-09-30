@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -14,12 +15,12 @@ import {
   updateEmail,
   updatePassword,
   onAuthStateChanged,
-  signOut as firebaseSignOut,
   UserInfo,
+  User,
   signOut,
 } from "firebase/auth";
+
 import {
-  DocumentData,
   collection,
   doc,
   getDocs,
@@ -28,67 +29,80 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { useRouter } from "next/router";
 import { app, db } from "../services/firebase";
 import { userSchema } from "../firestore/usuario/dto/usuario.dto";
-
-type Error = {
-  error: string;
-  status: string;
-};
-
-type SignInCredentials = {
-  email: string;
-  password: string;
-};
-
-type SignUpCredentials = {
-  name: string;
-  registryCode: string;
-  birthdate: string;
-  email: string;
-  phone: string;
-  thumbnail?: string;
-  password: string;
-};
+import { fetchUserSubscriptions } from "../services/membros";
+import {
+  SignInCredentials,
+  SignUpCredentials,
+  Subscription,
+} from "../services/types";
+import { SUBSCRIPTION_PLAN_ID } from "../services/constants";
 
 type AuthContextData = {
   user: UserInfo | undefined | null;
+  firebaseUser: any;
+  setFirebaseUser: React.Dispatch<React.SetStateAction<User>>;
   error: Error | undefined | null;
   signIn: (credentials: SignInCredentials) => Promise<any>;
   signUp: (credentials: SignUpCredentials) => Promise<any>;
   signOut: () => Promise<void>;
   changeProfileImage: (image: string) => Promise<void>;
-  loadUser: () => Promise<void | string>;
-  updateUser: (name: string, email: string, password: string) => Promise<void>;
+  updateUser: (nome: string, email: string, senha: string) => Promise<void>;
   verificationEmail: () => void;
+  subscriptions: Subscription[];
+  isMember: boolean;
   loading: boolean;
   token: string;
-  role: "medico" | "staff" | "patient";
-  setRole: (role: "medico" | "staff" | "patient") => void;
 };
 
 type AuthProviderProps = {
   children: ReactNode;
 };
 
-const USER_KEY = "auth-user";
-const TOKEN_KEY = "auth-token";
-
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+export const AuthContext = createContext({} as AuthContextData);
 
 function AuthProvider({ children }: AuthProviderProps) {
+  const router = useRouter();
   const auth = getAuth(app);
 
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<User>({} as User);
   const [token, setToken] = useState<string>("");
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [isMember, setIsMember] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [role, setRole] = useState<"medico" | "staff" | "patient">("staff");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        try {
+          const subscriptions = await fetchUserSubscriptions(user.email as string);
+
+          if (subscriptions) {
+            setSubscriptions(subscriptions.subscriptions);
+
+            subscriptions.subscriptions.map((subscription) => {
+              if (subscription.plan.id === SUBSCRIPTION_PLAN_ID) {
+                if (subscription.overdue_since === null) {
+                  setIsMember(true);
+                }
+              }
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
+
         setUser(user as UserInfo);
+
+        const q = query(collection(db, "Users"), where("id", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+        const userFirestore = querySnapshot.docs.map((doc) => doc.data())[0];
+
+        setFirebaseUser(userFirestore as any);
       } else {
         setUser(null);
       }
@@ -96,159 +110,94 @@ function AuthProvider({ children }: AuthProviderProps) {
     });
 
     return () => unsubscribe();
-  }, [auth]);
-
-  async function loadUser() {
-    setLoading(true);
-    const userAS = localStorage.getItem(USER_KEY);
-    const tokenAS = localStorage.getItem(TOKEN_KEY);
-
-    try {
-      if (userAS) {
-        const userJSON: UserInfo = JSON.parse(userAS);
-        const q = query(
-          collection(db, "Users"),
-          where("id", "==", userJSON.uid)
-        );
-
-        const querySnapshot = await getDocs(q);
-        const user = querySnapshot.docs.map((doc) => doc.data())[0];
-        setUser(user as UserInfo);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    } catch (e) {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadUser();
-  }, []);
+  }, [user]);
 
   async function signIn({ email, password }: SignInCredentials) {
     try {
       setLoading(true);
+      const res = await signInWithEmailAndPassword(auth, email, password);
 
-      const res = await signInWithEmailAndPassword(auth, email, password)
-        .then(async (userCredential) => {
-          const user = userCredential.user;
+      const user = res.user;
+      localStorage.setItem("token", user.refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
+      setToken(user.refreshToken);
+      setUser(user);
+      setLoading(false);
+      router.push("/dashboard"); // Redireciona para a página do usuário
 
-          localStorage.setItem(TOKEN_KEY, user.refreshToken);
-          localStorage.setItem(USER_KEY, JSON.stringify(user));
-          setToken(user.refreshToken);
-          setUser(user);
-          setLoading(false);
-          return user;
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setLoading(false);
-          return {
-            errorCode,
-            errorMessage,
-          };
-        });
-
-      return res;
+      return user;
     } catch (error: any) {
       setLoading(false);
+      setError(error);
       return error;
     }
   }
 
   async function signUp({
     name,
-    registryCode,
-    birthdate,
-    phone,
     thumbnail,
     email,
     password,
+    phone,
   }: SignUpCredentials) {
     try {
       setLoading(true);
 
-      const res = await createUserWithEmailAndPassword(auth, email, password)
-        .then(async (userCredential) => {
-          const user = userCredential.user;
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const user = res.user;
 
-          await updateProfile(user, {
-            displayName: name,
-          });
+      await updateProfile(user, {
+        displayName: name,
+        photoURL: thumbnail,
+      });
 
-          await userSchema.validate(
-            {
-              name,
-              registryCode,
-              birthdate,
-              phone,
-              email,
-              thumbnail,
-            },
-            { abortEarly: false }
-          );
+      await userSchema.validate(
+        { name, email, thumbnail, phone },
+        { abortEarly: false }
+      );
 
-          await setDoc(doc(db, "Users", user.uid), {
-            id: user.uid,
-            name,
-            registryCode,
-            birthdate,
-            phone,
-            thumbnail: thumbnail || "",
-            email,
-            createdAt: new Date().toISOString(),
-          });
+      await setDoc(doc(db, "Users", user.uid), {
+        id: user.uid,
+        name,
+        phone,
+        thumbnail: thumbnail || "",
+        email,
+        createdAt: new Date().toISOString(),
+      });
 
-          localStorage.setItem(TOKEN_KEY, user.refreshToken);
-          localStorage.setItem(USER_KEY, JSON.stringify(user));
-          setToken(user.refreshToken);
+      localStorage.setItem("token", user.refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
+      setToken(user.refreshToken);
 
-          // Use Router for navigation
-          // Example: router.push("/account-created");
+      setUser(user);
+      setLoading(false);
+      router.push("/dashboard");
 
-          setTimeout(() => {
-            setUser(user);
-            setLoading(false);
-          }, 1200);
-
-          return user;
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          alert("Erro ao criar conta: " + errorMessage);
-          setLoading(false);
-          return {
-            errorCode,
-            errorMessage,
-          };
-        });
-
-      return res;
+      return user;
     } catch (error: any) {
       setLoading(false);
+      setError(error);
       return error;
     }
   }
 
   async function signOut() {
-    localStorage.removeItem(USER_KEY);
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
-    await firebaseSignOut(auth);
+    setToken("");
+    await auth.signOut();
+    router.push("/login"); // Redireciona para a página de login
   }
 
-  async function updateUser(name: string, email: string, password: string) {
-    const user = auth.currentUser;
+  async function updateUser(nome: string, email: string, senha: string) {
+    const user = getAuth().currentUser;
 
     if (user) {
       try {
-        await updateProfile(user, { displayName: name });
+        await updateProfile(user, { displayName: nome });
         await updateEmail(user, email);
-        await updatePassword(user, password);
+        await updatePassword(user, senha);
       } catch (error) {
         console.error(error);
       }
@@ -256,36 +205,26 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   function checkEmailVerified() {
-    const user = auth.currentUser;
-    if (user) {
-      return user.emailVerified;
-    }
+    const user = getAuth().currentUser;
+    return user ? user.emailVerified : false;
   }
 
   function verificationEmail() {
-    const user = auth.currentUser;
-    const isVerified = checkEmailVerified();
-    if (user && !isVerified) {
+    const user = getAuth().currentUser;
+    if (user && !checkEmailVerified()) {
       sendEmailVerification(user)
-        .then(() => {
-          console.log("Email enviado");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        .then(() => console.log("Email enviado"))
+        .catch((error) => console.log(error));
     }
   }
 
   async function changeProfileImage(photoURL: string) {
-    console.log(photoURL);
-    await updateDoc(doc(db, "Users", String(user?.uid)), {
-      ...(user as UserInfo),
-      photoURL,
-    });
-    setUser({
-      ...(user as UserInfo),
-      photoURL,
-    });
+    const user = getAuth().currentUser;
+
+    if (user) {
+      await updateProfile(user, { photoURL });
+      setUser({ ...user, photoURL });
+    }
   }
 
   return (
@@ -293,17 +232,18 @@ function AuthProvider({ children }: AuthProviderProps) {
       value={{
         token,
         user,
+        firebaseUser,
+        setFirebaseUser,
         error,
-        role,
-        setRole,
         loading,
         signIn,
         signUp,
         signOut,
         changeProfileImage,
-        loadUser,
         updateUser,
         verificationEmail,
+        subscriptions,
+        isMember,
       }}
     >
       {children}
